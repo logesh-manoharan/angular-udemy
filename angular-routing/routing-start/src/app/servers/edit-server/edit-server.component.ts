@@ -10,20 +10,30 @@ import { ActivatedRoute, Params } from '@angular/router';
 })
 export class EditServerComponent implements OnInit {
   public editingServerId: number;
+  public isEditAllowed: boolean = false;
   server: {id: number, name: string, status: string};
   serverName = '';
   serverStatus = '';
 
   constructor(private serversService: ServersService, private activeRoute: ActivatedRoute) {
-    this.activeRoute.params.subscribe((params: Params) => this.editingServerId = params["id"]);
   }
 
   ngOnInit() {
-    console.log("Editing Server ID : " + this.editingServerId);
-    this.server = this.serversService.getServer(this.editingServerId);
-    this.serverName = this.server.name;
-    this.serverStatus = this.server.status;
-    console.log("Editing Server : " + JSON.stringify(this.server));
+    this.activeRoute.params.subscribe((params: Params) => { 
+      this.editingServerId = params["id"];
+      
+      console.log("Editing Server ID : " + this.editingServerId);
+      this.server = this.serversService.getServer(this.editingServerId);
+      this.serverName = this.server.name;
+      this.serverStatus = this.server.status;
+      console.log("Editing Server : " + JSON.stringify(this.server));
+    });
+
+    // Edit Access Restriction
+    this.activeRoute.queryParams.subscribe((queryParams: Params) => {
+      this.isEditAllowed = queryParams["isEditAllowed"];
+      console.log("Is Edit Allowed : " + this.isEditAllowed);
+    });
   }
 
   onUpdateServer() {
